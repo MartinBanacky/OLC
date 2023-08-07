@@ -23,13 +23,13 @@ CREATE TABLE typ_zanr
 CREATE TABLE typ_narodnost
 (
     id_typ_narodnost INT IDENTITY(1,1) PRIMARY KEY ,
-    nazev VARCHAR(50) NOT NULL
+    nazev VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE interpret
 (
     id_interpret INT IDENTITY(1,1) PRIMARY KEY ,
-    nazev VARCHAR(50) NOT NULL,
+    nazev VARCHAR(50) NOT NULL UNIQUE,
     id_typ_narodnost INTEGER,
     FOREIGN KEY (id_typ_narodnost) REFERENCES typ_narodnost(id_typ_narodnost) ON DELETE SET NULL
 );
@@ -38,7 +38,7 @@ CREATE TABLE album
 (
     id_album INT IDENTITY(1,1) PRIMARY KEY ,
     id_typ_zanr INTEGER,
-    nazev VARCHAR(100) NOT NULL,
+    nazev VARCHAR(100) NOT NULL UNIQUE,
     datum_vydani DATE NOT NULL,
     FOREIGN KEY (id_typ_zanr) REFERENCES typ_zanr(id_typ_zanr) ON DELETE SET NULL
 );
@@ -56,7 +56,7 @@ CREATE TABLE album_interpret
 CREATE TABLE skladba
 (
     id_skladba INT IDENTITY(1,1) PRIMARY KEY ,
-    nazev VARCHAR(50) NOT NULL,
+    nazev VARCHAR(50) NOT NULL UNIQUE,
     delka TIME
 );
 
@@ -68,7 +68,8 @@ CREATE TABLE album_skladba
     id_skladba INTEGER,
     FOREIGN KEY (id_album) REFERENCES album(id_album) ON DELETE SET NULL,
     FOREIGN KEY (id_skladba) REFERENCES skladba(id_skladba) ON DELETE SET NULL,
-    CONSTRAINT UC_AlbumSkladba UNIQUE (cislo_stopy, id_album, id_skladba)
+    CONSTRAINT UC_StopaAlbum UNIQUE (cislo_stopy, id_album),
+    CONSTRAINT AlbumSkladba UNIQUE (id_album,id_skladba)
 );
 
 --TESTOVACIE DATA
@@ -96,18 +97,18 @@ INSERT INTO typ_narodnost
 VALUES
     ('American'),
     ('Australian'),
-    ('Sweden');
+    ('Swedish');
 
-DECLARE @id_american INT, @id_australian INT, @id_sweden INT;
+DECLARE @id_american INT, @id_australian INT, @id_swedish INT;
 SET @id_american = (SELECT id_typ_narodnost
 FROM typ_narodnost
 WHERE nazev = 'American');
 SET @id_australian = (SELECT id_typ_narodnost
 FROM typ_narodnost
 WHERE nazev = 'Australian');
-SET @id_sweden = (SELECT id_typ_narodnost
+SET @id_swedish = (SELECT id_typ_narodnost
 FROM typ_narodnost
-WHERE nazev = 'Sweden');
+WHERE nazev = 'Swedish');
 
 INSERT INTO skladba
     (nazev, delka)
@@ -182,7 +183,7 @@ VALUES
     ('AC/DC', @id_australian),
     ('Bon Jovi', @id_american),
     ('Twisted Sister', @id_american),
-    ('Europe', @id_sweden),
+    ('Europe', @id_swedish),
     ('Cheap Trick', @id_american);
 
 INSERT INTO album_interpret
@@ -191,37 +192,37 @@ VALUES
     ((SELECT id_album
         FROM album
         WHERE nazev = 'Appetite for Destruction'),
-    (SELECT id_interpret
+        (SELECT id_interpret
         FROM interpret
         WHERE nazev = 'Guns N Roses')),
     ((SELECT id_album
         FROM album
         WHERE nazev = 'Back in Black'),
-    (SELECT id_interpret
+        (SELECT id_interpret
         FROM interpret
         WHERE nazev = 'AC/DC')),
     ((SELECT id_album
         FROM album
         WHERE nazev = 'Slippery When Wet'),
-    (SELECT id_interpret
+        (SELECT id_interpret
         FROM interpret
         WHERE nazev = 'Bon Jovi')),
     ((SELECT id_album
         FROM album
         WHERE nazev = 'Stay Hungry'),
-    (SELECT id_interpret
+        (SELECT id_interpret
         FROM interpret
         WHERE nazev = 'Twisted Sister')),
     ((SELECT id_album
         FROM album
         WHERE nazev ='On the Loose'),
-    (SELECT id_interpret
+        (SELECT id_interpret
         FROM interpret
         WHERE nazev = 'Europe')),
     ((SELECT id_album
         FROM album
         WHERE nazev = 'Lap of Luxury'),
-    (SELECT id_interpret
+        (SELECT id_interpret
         FROM interpret
         WHERE nazev = 'Cheap Trick'));
 
