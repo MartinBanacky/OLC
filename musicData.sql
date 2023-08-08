@@ -50,7 +50,7 @@ CREATE TABLE album_interpret
     id_interpret INTEGER,
     FOREIGN KEY (id_album) REFERENCES album(id_album) ON DELETE SET NULL,
     FOREIGN KEY (id_interpret) REFERENCES interpret(id_interpret) ON DELETE SET NULL,
-    CONSTRAINT UC_AlbumInterpert UNIQUE (id_album, id_interpret)
+    CONSTRAINT C_AlbumInterpert UNIQUE (id_album, id_interpret)
 );
 
 CREATE TABLE skladba
@@ -68,8 +68,8 @@ CREATE TABLE album_skladba
     id_skladba INTEGER,
     FOREIGN KEY (id_album) REFERENCES album(id_album) ON DELETE SET NULL,
     FOREIGN KEY (id_skladba) REFERENCES skladba(id_skladba) ON DELETE SET NULL,
-    CONSTRAINT UC_StopaAlbum UNIQUE (cislo_stopy, id_album),
-    CONSTRAINT AlbumSkladba UNIQUE (id_album,id_skladba)
+    CONSTRAINT C_StopaAlbum UNIQUE (cislo_stopy, id_album),
+    CONSTRAINT C_AlbumSkladba UNIQUE (id_album,id_skladba)
 );
 
 --TESTOVACIE DATA
